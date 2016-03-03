@@ -1,6 +1,6 @@
 {
   "name": "rtltext",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "author": "Ricardo Brandão",
   "description": "a module to apply RTL text to text html elements",
   "scripts": {
