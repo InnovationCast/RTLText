@@ -5,14 +5,14 @@
  *
  * What it does:
  *
- * This module will set the direction of a text element to RTL when a threshold
+ * This module will set the direction of a (text) element to RTL when a threshold
  * of RTL characters has been reached (rtlThreshold). It also applies Twitter-
  * specific RTL rules regarding the placement of @ signs, # tags, and URLs.
  *
  * How to use:
  *
  * Bind keyup and keydown to RTLText.onTextChange. If you have initial text,
- * call RTLText.setText(textarea, initial_string) to set markers on that
+ * call RTLText.setText(textElement, initial_string) to set markers on that
  * initial text.
  */
 
@@ -86,14 +86,14 @@ class RTLText {
 	}
 
 	// Optionally takes a second param, with original text, to exclude from RTL/LTR calculation
-	setText(textarea) {
+	setText(textElement) {
 		// Original directionality could be in a few places. Check them all.
 		if (!originalDir) {
-			if (textarea.style.direction) {
-				originalDir = textarea.style.direction;
+			if (textElement.style.direction) {
+				originalDir = textElement.style.direction;
 			}
-			else if (textarea.dir) {
-				originalDir = textarea.dir;
+			else if (textElement.dir) {
+				originalDir = textElement.dir;
 			}
 			else if (document.body.style.direction) {
 				originalDir = document.body.style.direction;
@@ -104,11 +104,11 @@ class RTLText {
 		}
 
 		if (arguments.length === 2) {
-			originalDir = textarea.ownerDocument.documentElement.className;
+			originalDir = textElement.ownerDocument.documentElement.className;
 			originalText = arguments[1];
 		}
 
-		let text = textarea.value;
+		let text = textElement.value || textElement.innerText;
 		if (!text) {
 			return;
 		}
@@ -118,18 +118,18 @@ class RTLText {
 		let newTextDir = isRTL ? 'rtl' : 'ltr';
 
 		if (newText !== text) {
-			let pos = getCaretPosition(textarea);
+			let pos = getCaretPosition(textElement);
 			// Fix for Chrome for Android
-			textarea.value = "";
-			textarea.focus();
-			textarea.value = newText;
+			textElement.value = "";
+			textElement.focus();
+			textElement.value = newText;
 			// Assume any recent change in text length due to markers affects the
 			// current cursor position. If more accuracy is needed, the position
 			// could be translated during replace operations inside setMarkers.
-			setCaretPosition(textarea, pos + newText.length - plainText.length);
+			setCaretPosition(textElement, pos + newText.length - plainText.length);
 		}
 		if (!setManually) {
-			setTextDirection(newTextDir, textarea);
+			setTextDirection(newTextDir, textElement);
 		}
 	}
 
@@ -318,7 +318,7 @@ function setMarkers(plainText) {
 // direction until a normal char is consumed.
 function erasePastMarkers(e) {
 	let offset;
-	let textarea = (e.target) ? e.target : e.srcElement;
+	let textElement = (e.target) ? e.target : e.srcElement;
 	let key = (e.which) ? e.which : e.keyCode;
 	if (key === keyConstants.BACKSPACE) { // backspace
 		offset = -1;
@@ -328,8 +328,8 @@ function erasePastMarkers(e) {
 		return;
 	}
 
-	let pos = getCaretPosition(textarea);
-	let text = textarea.value;
+	let pos = getCaretPosition(textElement);
+	let text = textElement.value || textElement.innerText;
 	let numErased = 0;
 	let charToDelete;
 	do {
@@ -343,10 +343,10 @@ function erasePastMarkers(e) {
 	} while (charToDelete.match(dirMark));
 
 	if (numErased > 1) {
-		textarea.value = text;
+		textElement.value = text;
 		// If more than 1 needed to be removed, update the text
 		// and caret manually and stop the event.
-		setCaretPosition(textarea, pos);
+		setCaretPosition(textElement, pos);
 		e.preventDefault ? e.preventDefault() : e.returnValue = false;
 	}
 }
@@ -356,7 +356,7 @@ function removeMarkers(text) {
 }
   
 function detectManualDirection (e) {
-	let textarea = e.target || e.srcElement;
+	let textElement = e.target || e.srcElement;
 	if (e.type === "keydown" && (e.keyCode === 91 || e.keyCode === 16 || e.keyCode === 88 || e.keyCode === 17)) {
 		heldKeyCodes[String(e.keyCode)] = true;
 	}
@@ -367,11 +367,11 @@ function detectManualDirection (e) {
 	if (((!useCtrlKey && heldKeyCodes['91']) || (useCtrlKey && heldKeyCodes['17'])) && heldKeyCodes['16'] && heldKeyCodes['88']) {
 		setManually = true;
 
-		if (textarea.dir === 'rtl') {
-			setTextDirection('ltr', textarea);
+		if (textElement.dir === 'rtl') {
+			setTextDirection('ltr', textElement);
 		}
 		else {
-			setTextDirection('rtl', textarea);
+			setTextDirection('rtl', textElement);
 		}
 		heldKeyCodes =  { '91': false,
 			'16': false,

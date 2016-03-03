@@ -4,7 +4,6 @@ import $ from 'jquery';
 import RTLText from './../../src/RTLText.module.js';
 import caret from './../lib/caret';
 
-
 describe('tools to apply RTL rules to text entry', function () {
   var KEY_ESCAPE = 27;
   var KEY_ENTER = 13;

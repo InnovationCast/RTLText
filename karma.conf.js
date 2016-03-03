@@ -15,7 +15,7 @@ module.exports = function (config) {
 		jspm: {
 			config: 'config.js',
 			loadFiles: [
-				'tests/**/*.js'
+				'test/**/*.js'
 			],
 			serveFiles: [
 				'src/*.js'
@@ -24,7 +24,7 @@ module.exports = function (config) {
 
 		proxies: {
 			'/src/': '/base/src/',
-            '/tests/': '/base/tests/',
+            '/test/': '/base/test/',
             '/jspm_packages/': '/base/jspm_packages/'
 		},
 
