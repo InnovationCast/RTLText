@@ -1,33 +1,61 @@
-{
-  "name": "rtltextarea",
-  "preferGlobal": "true",
-  "version": "1.0.1",
-  "author": "Esten Hurtle <ehurtle@twitter.com>",
-  "description": "a module to apply RTL text to textboxes",
   "scripts": {
     "pretest": "forever start ./tests/server.js",
     "test": "phantomjs ./tests/public/lib/phantomjs-testrunner.js http://localhost:8085/phantom-runner.html",
     "posttest": "forever stop tests/server.js"
   },
+{
+  "name": "rtltext",
+  "version": "1.0.0",
+  "author": "Ricardo Brandão",
+  "description": "a module to apply RTL text to text html elements",
   "main": "./src/RTLText.module.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/twitter/RTLtextarea.git"
+    "url": "https://github.com/ricardobrandao/RTLtextarea.git"
   },
   "keywords": [
     "RTL",
     "international",
     "i18n"
   ],
-  "devDependencies" : {
-    "node-static"   :  "0.6.x",
-    "phantomjs"     :  "0.2.x",
-    "twitter-text"  :  "1.5.x",
-    "forever"       :  "0.10.x"
+  "devDependencies": {
+    "babel-core": "^6.3.17",
+    "babel-polyfill": "^6.3.14",
+    "babel-preset-es2015": "^6.3.13",
   },
   "analyze": false,
   "license": "MIT",
   "engines": {
     "node": ">=0.6"
+  },
+  "jspm": {
+    "dependencies": {
+      "jquery": "npm:jquery@^2.2.1",
+      "twitter/twitter-text": "github:twitter/twitter-text@^1.13.4"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4"
+    },
+    "overrides": {
+      "github:twitter/twitter-text@1.13.4": {
+        "directories": {
+          "lib": "js"
+        },
+        "main": "js/twitter-text",
+        "shim": {
+          "js/bootstrap": {
+            "deps": [
+              "jquery"
+            ],
+            "exports": "$"
+          }
+        },
+        "dependencies": {
+          "jquery": "github:components/jquery@2.1.4"
+        }
+      }
+    }
   }
 }
